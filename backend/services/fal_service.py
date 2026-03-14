@@ -16,7 +16,7 @@ def remove_background(image_url: str) -> str:
     return result["image"]["url"]
 
 
-def generate_product_shot(image_url: str, scene_prompt: str) -> list[str]:
+def generate_product_shot(image_url: str, scene_prompt: str, num_images: int = 1) -> list[str]:
     """Generate product lifestyle shots. Returns list of image URLs."""
     result = fal_client.subscribe(
         "fal-ai/bria/product-shot",
@@ -25,6 +25,7 @@ def generate_product_shot(image_url: str, scene_prompt: str) -> list[str]:
             "scene_description": scene_prompt,
             "placement_type": "automatic",
             "shot_size": [1024, 1024],
+            "num_results": num_images,
         },
     )
-    return [img["url"] for img in result["images"]]
+    return [img["url"] for img in result["images"]][:num_images]

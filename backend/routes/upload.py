@@ -15,5 +15,8 @@ async def upload_image(file: UploadFile = File(...)):
         raise HTTPException(400, f"Invalid file type: {file.content_type}")
 
     contents = await file.read()
-    url = await upload_to_fal(contents, file.content_type)
+    try:
+        url = await upload_to_fal(contents, file.content_type)
+    except Exception as e:
+        raise HTTPException(500, f"Upload failed: {str(e)}")
     return UploadResponse(image_url=url)

@@ -46,8 +46,9 @@ SCENE_PRESETS = {
 
 @router.post("/generate", response_model=GenerateResponse)
 async def generate(request: GenerateRequest):
+    scenes = request.scenes[:3]  # Budget limit: max 3 scenes
     results = []
-    for scene_id in request.scenes:
+    for scene_id in scenes:
         if scene_id in SCENE_PRESETS:
             preset = SCENE_PRESETS[scene_id]
             prompt = preset["prompt"]
