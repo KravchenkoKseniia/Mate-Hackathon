@@ -14,39 +14,27 @@ export default function UploadZone({ onFileSelected }: UploadZoneProps) {
 
   function validate(file: File): string | null {
     const allowed = ["image/png", "image/jpeg", "image/webp"];
-    if (!allowed.includes(file.type)) return "Please upload a PNG, JPG, or WEBP image.";
+    if (!allowed.includes(file.type))
+      return "Please upload a PNG, JPG, or WEBP image.";
     if (file.size > 10 * 1024 * 1024) return "File too large. Max 10MB.";
     return null;
   }
 
   function handleFile(file: File) {
     const err = validate(file);
-    if (err) {
-      setError(err);
-      return;
-    }
+    if (err) { setError(err); return; }
     setError(null);
     setSelectedFile(file);
     setPreview(URL.createObjectURL(file));
   }
 
-  function onDragOver(e: DragEvent) {
-    e.preventDefault();
-    setIsDragging(true);
-  }
-
-  function onDragLeave(e: DragEvent) {
-    e.preventDefault();
-    setIsDragging(false);
-  }
-
+  function onDragOver(e: DragEvent) { e.preventDefault(); setIsDragging(true); }
+  function onDragLeave(e: DragEvent) { e.preventDefault(); setIsDragging(false); }
   function onDrop(e: DragEvent) {
-    e.preventDefault();
-    setIsDragging(false);
+    e.preventDefault(); setIsDragging(false);
     const file = e.dataTransfer.files[0];
     if (file) handleFile(file);
   }
-
   function onChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) handleFile(file);
@@ -54,13 +42,15 @@ export default function UploadZone({ onFileSelected }: UploadZoneProps) {
 
   return (
     <div className="animate-fade-in flex flex-col items-center">
-      <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3 text-center">
+      <h2
+        className="text-3xl sm:text-4xl font-bold mb-3 text-center leading-tight"
+        style={{ color: "var(--color-heading)" }}
+      >
         Turn any product photo into
         <br />
-        <span className="text-blue-500">stunning lifestyle shots</span> in
-        seconds
+        <span style={{ color: "var(--color-accent)" }}>stunning lifestyle shots</span>
       </h2>
-      <p className="text-neutral-400 mb-8 text-center max-w-lg">
+      <p className="mb-10 text-center max-w-md" style={{ color: "var(--color-muted)" }}>
         Upload your product image and let AI generate professional e-commerce
         photography in multiple scenes.
       </p>
@@ -71,18 +61,24 @@ export default function UploadZone({ onFileSelected }: UploadZoneProps) {
           onDragLeave={onDragLeave}
           onDrop={onDrop}
           onClick={() => inputRef.current?.click()}
-          className={`w-full max-w-lg border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-200 ${
-            isDragging
-              ? "border-blue-500 bg-blue-500/10"
-              : "border-[#2a2a2a] bg-[#1a1a1a] hover:border-[#3a3a3a] hover:bg-[#1e1e1e]"
-          }`}
+          className="w-full max-w-xl border-2 border-dashed rounded-lg p-16 text-center cursor-pointer transition-all duration-200"
+          style={{
+            borderColor: isDragging ? "var(--color-accent)" : "var(--color-border-hover)",
+            backgroundColor: isDragging ? "var(--color-accent-soft)" : "var(--color-surface)",
+          }}
+          onMouseEnter={(e) => {
+            if (!isDragging) e.currentTarget.style.borderColor = "var(--color-accent)";
+          }}
+          onMouseLeave={(e) => {
+            if (!isDragging) e.currentTarget.style.borderColor = "var(--color-border-hover)";
+          }}
         >
-          <div className="text-4xl mb-4">📸</div>
-          <p className="text-neutral-300 font-medium mb-1">
+          <div className="text-5xl mb-5 opacity-50">&#128247;</div>
+          <p className="font-medium mb-1" style={{ color: "var(--color-heading)" }}>
             Drag & drop your product photo here
           </p>
-          <p className="text-neutral-500 text-sm">
-            or click to browse — PNG, JPG, WEBP up to 10MB
+          <p className="text-sm" style={{ color: "var(--color-muted)" }}>
+            or click to browse &mdash; PNG, JPG, WEBP up to 10MB
           </p>
           <input
             ref={inputRef}
@@ -94,35 +90,53 @@ export default function UploadZone({ onFileSelected }: UploadZoneProps) {
         </div>
       ) : (
         <div className="flex flex-col items-center gap-6 animate-scale-up">
-          <div className="relative rounded-2xl overflow-hidden border border-[#2a2a2a] bg-[#1a1a1a]">
+          <div
+            className="rounded-lg overflow-hidden p-3"
+            style={{
+              backgroundColor: "var(--color-surface-alt)",
+              border: "1px solid var(--color-border)",
+            }}
+          >
             <img
               src={preview}
               alt="Preview"
-              className="max-w-xs max-h-72 object-contain"
+              className="max-w-xs max-h-72 object-contain rounded"
             />
           </div>
           <div className="flex gap-3">
             <button
-              onClick={() => {
-                setPreview(null);
-                setSelectedFile(null);
+              onClick={() => { setPreview(null); setSelectedFile(null); }}
+              className="px-5 py-2.5 rounded-lg text-sm font-medium transition-colors"
+              style={{
+                border: "2px solid var(--color-secondary)",
+                color: "var(--color-accent-text)",
+                backgroundColor: "transparent",
               }}
-              className="px-5 py-2.5 rounded-xl border border-[#2a2a2a] text-neutral-300 hover:bg-[#1a1a1a] transition-colors text-sm"
             >
               Change Image
             </button>
             <button
               onClick={() => selectedFile && onFileSelected(selectedFile)}
-              className="px-6 py-2.5 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-medium transition-colors text-sm"
+              className="px-6 py-2.5 rounded-lg text-white text-sm font-semibold transition-colors"
+              style={{ backgroundColor: "var(--color-accent)" }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-accent-hover)")}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "var(--color-accent)")}
             >
-              Continue
+              Continue &rarr;
             </button>
           </div>
         </div>
       )}
 
+      <p
+        className="mt-6 text-xs text-center max-w-md"
+        style={{ color: "var(--color-faint)" }}
+      >
+        &#128161; Tip: For best results, use a well-lit photo of your product on a plain, light background.
+      </p>
+
       {error && (
-        <p className="mt-4 text-red-400 text-sm">{error}</p>
+        <p className="mt-4 text-sm" style={{ color: "var(--color-danger-text)" }}>{error}</p>
       )}
     </div>
   );

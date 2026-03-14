@@ -4,45 +4,65 @@ const STEPS = ["Upload", "Remove BG", "Select Scenes", "Generate", "Results"];
 
 interface ProgressBarProps {
   currentStep: AppStep;
+  onStepClick?: () => void;
 }
 
-export default function ProgressBar({ currentStep }: ProgressBarProps) {
+export default function ProgressBar({ currentStep, onStepClick }: ProgressBarProps) {
   return (
-    <div className="mb-10 flex items-center justify-center gap-2">
+    <div className="mb-12 flex items-center justify-center gap-1 sm:gap-2">
       {STEPS.map((label, i) => {
         const isCompleted = i < currentStep;
         const isCurrent = i === currentStep;
+        const canClick = isCompleted && onStepClick;
         return (
-          <div key={label} className="flex items-center gap-2">
-            <div className="flex flex-col items-center gap-1">
+          <div key={label} className="flex items-center gap-1 sm:gap-2">
+            <div
+              className={`flex flex-col items-center gap-1.5${canClick ? " cursor-pointer" : ""}`}
+              onClick={canClick ? onStepClick : undefined}
+            >
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
-                  isCompleted
-                    ? "bg-blue-500 text-white"
+                className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-300"
+                style={{
+                  backgroundColor: isCompleted
+                    ? "var(--color-accent)"
                     : isCurrent
-                      ? "bg-blue-500/20 text-blue-400 ring-2 ring-blue-500"
-                      : "bg-[#1a1a1a] text-neutral-500 border border-[#2a2a2a]"
-                }`}
+                      ? "var(--color-accent-soft)"
+                      : "var(--color-surface-alt)",
+                  color: isCompleted
+                    ? "#fff"
+                    : isCurrent
+                      ? "var(--color-accent-text)"
+                      : "var(--color-faint)",
+                  border: isCurrent
+                    ? "2px solid var(--color-accent)"
+                    : isCompleted
+                      ? "none"
+                      : "1px solid var(--color-border)",
+                }}
               >
-                {isCompleted ? "✓" : i + 1}
+                {isCompleted ? "\u2713" : i + 1}
               </div>
               <span
-                className={`text-xs hidden sm:block ${
-                  isCurrent
-                    ? "text-blue-400"
+                className="text-[10px] sm:text-xs hidden sm:block font-medium"
+                style={{
+                  color: isCurrent
+                    ? "var(--color-accent-text)"
                     : isCompleted
-                      ? "text-neutral-400"
-                      : "text-neutral-600"
-                }`}
+                      ? "var(--color-muted)"
+                      : "var(--color-faint)",
+                }}
               >
                 {label}
               </span>
             </div>
             {i < STEPS.length - 1 && (
               <div
-                className={`w-8 h-px mt-[-16px] ${
-                  isCompleted ? "bg-blue-500" : "bg-[#2a2a2a]"
-                }`}
+                className="w-6 sm:w-10 h-px mt-[-16px]"
+                style={{
+                  backgroundColor: isCompleted
+                    ? "var(--color-accent)"
+                    : "var(--color-border)",
+                }}
               />
             )}
           </div>

@@ -11,7 +11,7 @@ class RemoveBgResponse(BaseModel):
 
 class GenerateRequest(BaseModel):
     image_url: str
-    scenes: list[str]  # list of scene prompt strings
+    scenes: list[str]  # list of scene prompt strings (max 3)
 
 
 class GeneratedScene(BaseModel):

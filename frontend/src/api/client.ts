@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8000/api";
+const API_BASE = "/api";
 
 export async function uploadImage(file: File): Promise<string> {
   const formData = new FormData();
@@ -51,5 +51,20 @@ export async function fetchScenes(): Promise<
 > {
   const res = await fetch(`${API_BASE}/scenes`);
   if (!res.ok) throw new Error("Failed to fetch scenes");
+  return res.json();
+}
+
+export async function recommendScenes(
+  imageUrl: string,
+  sceneIds?: string[],
+): Promise<{ reasoning: string; recommended_scenes: string[] }> {
+  const body: Record<string, unknown> = { image_url: imageUrl };
+  if (sceneIds) body.scene_ids = sceneIds;
+  const res = await fetch(`${API_BASE}/recommend-scenes`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) return { reasoning: "", recommended_scenes: [] };
   return res.json();
 }
